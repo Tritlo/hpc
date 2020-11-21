@@ -40,5 +40,5 @@ Library
         deepseq    >= 1.1   && < 1.5,
         directory  >= 1.1   && < 1.4,
         filepath   >= 1     && < 1.5,
-        time       >= 1.2   && < 1.11
+        time       >= 1.2   && < 1.12
     ghc-options: -Wall
