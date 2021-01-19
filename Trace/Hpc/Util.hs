@@ -1,6 +1,8 @@
 {-# LANGUAGE CPP #-}
-#ifdef __GLASGOW_HASKELL__
+#if __GLASGOW_HASKELL__ >= 704
 {-# LANGUAGE Safe #-}
+#elif __GLASGOW_HASKELL__ >= 702
+{-# LANGUAGE Trustworthy #-}
 #endif
 -----------------------------------------
 -- Andy Gill and Colin Runciman, June 2006
