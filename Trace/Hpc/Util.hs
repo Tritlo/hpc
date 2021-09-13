@@ -1,6 +1,6 @@
 {-# LANGUAGE CPP #-}
 #if __GLASGOW_HASKELL__ >= 704
-{-# LANGUAGE Safe #-}
+{-# LANGUAGE Safe, DeriveGeneric, StandaloneDeriving #-}
 #elif __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 #endif
@@ -22,7 +22,11 @@ module Trace.Hpc.Util
        , writeFileUtf8
        ) where
 
-import Control.DeepSeq (deepseq)
+#if __GLASGOW_HASKELL__ >= 704
+import GHC.Generics (Generic)
+#endif
+
+import Control.DeepSeq (deepseq, NFData)
 import qualified Control.Exception as Exception
 import Data.List(foldl')
 import Data.Char (ord)
@@ -80,6 +84,11 @@ class HpcHash a where
   toHash :: a -> Hash
 
 newtype Hash = Hash Word32 deriving (Eq)
+
+#if __GLASGOW_HASKELL__ >= 704
+deriving instance (Generic Hash)
+instance NFData Hash
+#endif
 
 instance Read Hash where
   readsPrec p n = [ (Hash v,rest)

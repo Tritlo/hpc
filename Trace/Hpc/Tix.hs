@@ -1,6 +1,6 @@
 {-# LANGUAGE CPP #-}
 #if __GLASGOW_HASKELL__ >= 704
-{-# LANGUAGE Safe #-}
+{-# LANGUAGE Safe, DeriveGeneric, StandaloneDeriving #-}
 #elif __GLASGOW_HASKELL__ >= 702
 -- System.FilePath in filepath version 1.2.0.1 isn't marked or implied Safe,
 -- as shipped with GHC 7.2.
@@ -16,6 +16,11 @@ module Trace.Hpc.Tix(Tix(..), TixModule(..),
                      tixModuleName, tixModuleHash, tixModuleTixs,
                      readTix, writeTix, getTixFileName) where
 
+#if __GLASGOW_HASKELL__ >= 704
+import GHC.Generics (Generic)
+import Control.DeepSeq (NFData)
+#endif
+
 import System.FilePath (replaceExtension)
 
 import Trace.Hpc.Util (Hash, catchIO, readFileUtf8, writeFileUtf8)
@@ -25,12 +30,22 @@ import Trace.Hpc.Util (Hash, catchIO, readFileUtf8, writeFileUtf8)
 data Tix = Tix [TixModule]
         deriving (Read, Show, Eq)
 
+#if __GLASGOW_HASKELL__ >= 704
+deriving instance (Generic Tix)
+instance NFData Tix
+#endif
+
 data TixModule = TixModule
                  String    --  module name
                  Hash      --  hash number
                  Int       --  length of Tix list (allows pre-allocation at parse time).
                  [Integer] --  actual ticks
         deriving (Read, Show, Eq)
+
+#if __GLASGOW_HASKELL__ >= 704
+deriving instance (Generic TixModule)
+instance NFData TixModule
+#endif
 
 -- TODO: Turn extractors below into proper 'TixModule' field-labels
 tixModuleName :: TixModule -> String
