@@ -31,7 +31,9 @@ data Tix = Tix [TixModule]
         deriving (Read, Show, Eq)
 
 #if __GLASGOW_HASKELL__ >= 704
+-- | @since 0.6.2.0
 deriving instance (Generic Tix)
+-- | @since 0.6.2.0
 instance NFData Tix
 #endif
 
@@ -43,7 +45,9 @@ data TixModule = TixModule
         deriving (Read, Show, Eq)
 
 #if __GLASGOW_HASKELL__ >= 704
+-- | @since 0.6.2.0
 deriving instance (Generic TixModule)
+-- | @since 0.6.2.0
 instance NFData TixModule
 #endif
 

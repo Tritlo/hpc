@@ -86,7 +86,9 @@ class HpcHash a where
 newtype Hash = Hash Word32 deriving (Eq)
 
 #if __GLASGOW_HASKELL__ >= 704
+-- | @since 0.6.2.0
 deriving instance (Generic Hash)
+-- | @since 0.6.2.0
 instance NFData Hash
 #endif
 
