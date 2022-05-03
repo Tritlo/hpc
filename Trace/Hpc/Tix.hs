@@ -13,7 +13,7 @@
 -- | Datatypes and file-access routines for the tick data file
 -- (@.tix@) used by Hpc.
 module Trace.Hpc.Tix(Tix(..), TixModule(..),
-                     tixModuleName, tixModuleHash, tixModuleTixs,
+                     tixModuleName, tixModuleHash, tixModuleTixs, tixModuleTraceInfo, tixModuleTrace,
                      readTix, writeTix, getTixFileName) where
 
 import System.FilePath (replaceExtension)
@@ -30,15 +30,21 @@ data TixModule = TixModule
                  Hash      --  hash number
                  Int       --  length of Tix list (allows pre-allocation at parse time).
                  [Integer] --  actual ticks
+                 [Integer] --  current trace posistion
+                 [Integer] -- traces
         deriving (Read, Show, Eq)
 
 -- TODO: Turn extractors below into proper 'TixModule' field-labels
 tixModuleName :: TixModule -> String
-tixModuleName (TixModule nm _ _ _) = nm
+tixModuleName (TixModule nm _ _ _ _ _) = nm
 tixModuleHash :: TixModule -> Hash
-tixModuleHash (TixModule _ h  _ _) = h
+tixModuleHash (TixModule _ h  _ _ _ _) = h
 tixModuleTixs :: TixModule -> [Integer]
-tixModuleTixs (TixModule  _ _ _ tixs) = tixs
+tixModuleTixs (TixModule  _ _ _ tixs _ _) = tixs
+tixModuleTraceInfo :: TixModule -> [Integer]
+tixModuleTraceInfo (TixModule  _ _ _ _ info _) = info
+tixModuleTrace :: TixModule -> [Integer]
+tixModuleTrace (TixModule  _ _ _ _ _ trace) = trace
 
 -- We /always/ read and write Tix from the current working directory.
 

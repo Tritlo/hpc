@@ -1,5 +1,9 @@
 # Changelog for [`hpc` package](http://hackage.haskell.org/package/hpc)
 
+## 0.7.0.0  *May 2022*
+
+  * Update to work with new hpc based traces
+
 ## 0.6.1.0  *October 2019*
 
   * Addition of `readFileUtf8` and `writeFileUtf8` functions.
