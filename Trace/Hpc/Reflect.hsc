@@ -85,7 +85,7 @@ examineTix = do
                                    (map fromIntegral trx)
                        | (ModuleInfo mod' count hash ptr info trx) <- modInfo
 #else
-                                   [] []
+                                   [0,1] [0]
                        | (ModuleInfo mod' count hash ptr) <- modInfo
 #endif
                        ]
