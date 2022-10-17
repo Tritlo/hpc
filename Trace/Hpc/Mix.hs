@@ -72,16 +72,21 @@ instance HpcHash CondBox where
    toHash QualBinBox  = 0x30
 
 
--- | Create is mix file.
-mixCreate :: String -- ^ Dir Name
-          -> String -- ^ module Name
-          -> Mix    -- ^ Mix DataStructure
+-- | Write a mix file to disk.
+-- 
+-- The following command creates the mix file under the location "\/home\/user\/main\/Main.mix"
+--
+-- > mixCreate "/home/user/main" "Main" mix
+
+mixCreate :: FilePath -- ^ Name of the target directory.
+          -> String -- ^ Name of the module for which the mix file is created.
+          -> Mix    -- ^ The Mix data structure.
           -> IO ()
 mixCreate dirName modName mix =
    writeFile (mixName dirName modName) (show mix)
 
 -- | Read a mix file.
-readMix :: [String]                 -- ^ Dir Names
+readMix :: [FilePath]                 -- ^ Dir Names
         -> Either String TixModule  -- ^ module wanted
         -> IO Mix
 readMix dirNames mod' = do

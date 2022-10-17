@@ -1,4 +1,9 @@
 # Changelog for [`hpc` package](http://hackage.haskell.org/package/hpc)
+
+## Unreleased
+
+  * Replace uses of `String` by `FilePath` in functions `readTix`, `writeTix`, `getTixFileName`, `readMix` and `mixCreate`.
+
 ## 0.6.2.0  *September 2021*
 
   * Addition of `NFData` instances for `Tix` and `TixModule`

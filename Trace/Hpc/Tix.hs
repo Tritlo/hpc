@@ -48,19 +48,23 @@ tixModuleTixs (TixModule  _ _ _ tixs) = tixs
 -- We /always/ read and write Tix from the current working directory.
 
 -- | Read a @.tix@ File.
-readTix :: String
+readTix :: FilePath
         -> IO (Maybe Tix)
 readTix tixFilename =
   catchIO (fmap (Just . read) $ readFileUtf8 tixFilename)
           (const $ return Nothing)
 
 -- | Write a @.tix@ File.
-writeTix :: String
+writeTix :: FilePath
          -> Tix
          -> IO ()
 writeTix name tix = writeFileUtf8 name (show tix)
 
 -- | 'getTixFullName' takes a binary or @.tix@-file name,
 -- and normalizes it into a @.tix@-file name.
-getTixFileName :: String -> String
+--
+-- > getTixFileName "example.hs" == "example.tix"
+-- > getTixFileName "example.tar.gz" == "example.tar.tix"
+-- > getTixFileName "example.tix" == "example.tix"
+getTixFileName :: FilePath -> FilePath
 getTixFileName str = replaceExtension str "tix"
