@@ -1,9 +1,16 @@
 {-# LANGUAGE CPP #-}
+
 #if __GLASGOW_HASKELL__ >= 704
-{-# LANGUAGE Safe, DeriveGeneric, StandaloneDeriving #-}
+{-# LANGUAGE DeriveGeneric, StandaloneDeriving #-}
+#endif
+
+-- Starting from directory-1.3.8.0 "System.Directory" is no longer Safe.
+#if __GLASGOW_HASKELL__ >= 704 && !MIN_VERSION_directory(1,3,8)
+{-# LANGUAGE Safe #-}
 #elif __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 #endif
+
 -----------------------------------------
 -- Andy Gill and Colin Runciman, June 2006
 ------------------------------------------
