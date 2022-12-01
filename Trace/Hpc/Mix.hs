@@ -113,7 +113,7 @@ readMix dirNames mod' = do
                    | dirName <- dirNames
                    ]
    case catMaybes res of
-     xs@(x:_:_) | any (/= x) (tail xs) ->
+     xs@(x : tl@(_ : _)) | any (/= x) tl ->
               -- Only complain if multiple *different* `Mix` files with the
               -- same name are found (#9619).
               error $ "found " ++ show(length xs) ++ " different instances of "
