@@ -26,7 +26,6 @@ source-repository head
 
 Library
     default-language: Haskell98
-    other-extensions: CPP
 
     exposed-modules:
         Trace.Hpc.Util
@@ -35,7 +34,7 @@ Library
         Trace.Hpc.Reflect
 
     Build-Depends:
-        base       >= 4.4.1 && < 4.19,
+        base       >= 4.12  && < 4.19,
         containers >= 0.4.1 && < 0.7,
         deepseq    >= 1.1   && < 1.5,
         directory  >= 1.1   && < 1.4,

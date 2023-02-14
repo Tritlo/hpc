@@ -1,9 +1,4 @@
-{-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 709
 {-# LANGUAGE Safe #-}
-#elif __GLASGOW_HASKELL__ >= 701
-{-# LANGUAGE Trustworthy #-}
-#endif
 ---------------------------------------------------------------
 -- Colin Runciman and Andy Gill, June 2006
 ---------------------------------------------------------------
@@ -26,11 +21,7 @@ import Data.List (intercalate)
 import Data.Maybe (catMaybes, fromMaybe)
 import Data.Time (UTCTime)
 import Data.Tree
-#if MIN_VERSION_base(4,6,0)
 import Text.Read (readMaybe)
-#else
-import Data.Char (isSpace)
-#endif
 
 import System.FilePath
 
@@ -40,13 +31,6 @@ import System.FilePath
 
 import Trace.Hpc.Util (HpcPos, insideHpcPos, Hash, HpcHash(..), catchIO)
 import Trace.Hpc.Tix
-
-#if !MIN_VERSION_base(4,6,0)
-readMaybe :: Read a => String -> Maybe a
-readMaybe s = case reads s of
-  [(x, s')] | all isSpace s' -> Just x
-  _                          -> Nothing
-#endif
 
 -- | 'Mix' is the information about a modules static properties, like
 -- location of Tix's in a file.
