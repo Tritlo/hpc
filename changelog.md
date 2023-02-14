@@ -3,6 +3,7 @@
 ## Unreleased
 
   * Replace uses of `String` by `FilePath` in functions `readTix`, `writeTix`, `getTixFileName`, `readMix` and `mixCreate`.
+  * Remove support for version of GHC below 8.6
 
 ## 0.6.2.0  *September 2021*
 
