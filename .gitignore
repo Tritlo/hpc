@@ -4,3 +4,5 @@ dist-boot
 dist-newstyle
 ghc.mk
 *.normalised
+dist-newstyle/
+.stack-work/
