@@ -1,8 +1,4 @@
-{-# LANGUAGE ForeignFunctionInterface #-}
-#ifdef __GLASGOW_HASKELL__
-{-# LANGUAGE Trustworthy #-}
-#endif
-
+{-# LANGUAGE ForeignFunctionInterface, Trustworthy #-}
 module Trace.Hpc.Reflect
   ( clearTix
   , examineTix

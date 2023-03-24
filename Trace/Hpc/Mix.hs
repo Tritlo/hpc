@@ -1,9 +1,4 @@
-{-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 709
 {-# LANGUAGE Safe #-}
-#elif __GLASGOW_HASKELL__ >= 701
-{-# LANGUAGE Trustworthy #-}
-#endif
 ---------------------------------------------------------------
 -- Colin Runciman and Andy Gill, June 2006
 ---------------------------------------------------------------
@@ -26,11 +21,7 @@ import Data.List (intercalate)
 import Data.Maybe (catMaybes, fromMaybe)
 import Data.Time (UTCTime)
 import Data.Tree
-#if MIN_VERSION_base(4,6,0)
 import Text.Read (readMaybe)
-#else
-import Data.Char (isSpace)
-#endif
 
 import System.FilePath
 
@@ -40,13 +31,6 @@ import System.FilePath
 
 import Trace.Hpc.Util (HpcPos, insideHpcPos, Hash, HpcHash(..), catchIO)
 import Trace.Hpc.Tix
-
-#if !MIN_VERSION_base(4,6,0)
-readMaybe :: Read a => String -> Maybe a
-readMaybe s = case reads s of
-  [(x, s')] | all isSpace s' -> Just x
-  _                          -> Nothing
-#endif
 
 -- | 'Mix' is the information about a modules static properties, like
 -- location of Tix's in a file.
@@ -88,16 +72,21 @@ instance HpcHash CondBox where
    toHash QualBinBox  = 0x30
 
 
--- | Create is mix file.
-mixCreate :: String -- ^ Dir Name
-          -> String -- ^ module Name
-          -> Mix    -- ^ Mix DataStructure
+-- | Write a mix file to disk.
+-- 
+-- The following command creates the mix file under the location "\/home\/user\/main\/Main.mix"
+--
+-- > mixCreate "/home/user/main" "Main" mix
+
+mixCreate :: FilePath -- ^ Name of the target directory.
+          -> String -- ^ Name of the module for which the mix file is created.
+          -> Mix    -- ^ The Mix data structure.
           -> IO ()
 mixCreate dirName modName mix =
    writeFile (mixName dirName modName) (show mix)
 
 -- | Read a mix file.
-readMix :: [String]                 -- ^ Dir Names
+readMix :: [FilePath]                 -- ^ Dir Names
         -> Either String TixModule  -- ^ module wanted
         -> IO Mix
 readMix dirNames mod' = do
@@ -113,7 +102,7 @@ readMix dirNames mod' = do
                    | dirName <- dirNames
                    ]
    case catMaybes res of
-     xs@(x:_:_) | any (/= x) (tail xs) ->
+     xs@(x : tl@(_ : _)) | any (/= x) tl ->
               -- Only complain if multiple *different* `Mix` files with the
               -- same name are found (#9619).
               error $ "found " ++ show(length xs) ++ " different instances of "

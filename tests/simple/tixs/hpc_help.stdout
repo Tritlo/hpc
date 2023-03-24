@@ -16,3 +16,12 @@ Others:
   show        Show .tix file in readable, verbose format
   version     Display version for hpc
 
+
+or: hpc @response_file_1 @response_file_2 ...
+
+The contents of a Response File must have this format:
+COMMAND ...
+
+example:
+report my_library.tix --include=ModuleA \
+--include=ModuleB

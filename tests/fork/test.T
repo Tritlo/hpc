@@ -1,4 +1,4 @@
-setTestOpts([omit_ways(['ghci','threaded2']), when(fast(), skip)])
+setTestOpts([omit_ways(['ghci','threaded2']), when(fast(), skip), js_skip])
 
 hpc_prefix = "perl hpcrun.pl --clear --exeext={exeext} --hpc={hpc}"
 
