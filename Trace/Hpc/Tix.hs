@@ -30,6 +30,7 @@ data TixModule = TixModule
                  Hash      --  hash number
                  Int       --  length of Tix list (allows pre-allocation at parse time).
                  [Integer] --  actual ticks
+                 -- TODO: these should be ints
                  [Integer] --  current trace posistion
                  [Integer] -- traces
         deriving (Read, Show, Eq)
