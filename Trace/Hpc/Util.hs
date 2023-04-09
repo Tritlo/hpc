@@ -1,4 +1,5 @@
-{-# LANGUAGE Safe, DeriveGeneric, StandaloneDeriving #-}
+{-# LANGUAGE DeriveGeneric, StandaloneDeriving #-}
+{-# LANGUAGE Trustworthy #-}
 -----------------------------------------
 -- Andy Gill and Colin Runciman, June 2006
 ------------------------------------------
