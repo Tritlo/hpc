@@ -7,7 +7,7 @@
 -- (@.tix@) used by Hpc.
 module Trace.Hpc.Tix(Tix(..), TixModule(..),
                      tixModuleName, tixModuleHash, tixModuleTixs,
-#if __GLASGOW_HASKELL__ >= 963
+#if __GLASGOW_HASKELL__ >= 970
                      tixModuleTraceInfo, tixModuleTrace,
 #endif
                      readTix, writeTix, getTixFileName) where
@@ -33,7 +33,7 @@ data TixModule = TixModule
                  Hash      --  hash number
                  Int       --  length of Tix list (allows pre-allocation at parse time).
                  [Integer] --  actual ticks
-#if __GLASGOW_HASKELL__ >= 963
+#if __GLASGOW_HASKELL__ >= 970
                  [Integer] --  current trace posistion
                  [Integer] -- traces
 #endif
@@ -48,7 +48,7 @@ instance NFData TixModule
 tixModuleName :: TixModule -> String
 tixModuleHash :: TixModule -> Hash
 tixModuleTixs :: TixModule -> [Integer]
-#if __GLASGOW_HASKELL__ >= 963
+#if __GLASGOW_HASKELL__ >= 970
 tixModuleName (TixModule nm _ _ _ _ _) = nm
 tixModuleHash (TixModule _ h  _ _ _ _) = h
 tixModuleTixs (TixModule  _ _ _ tixs _ _) = tixs
