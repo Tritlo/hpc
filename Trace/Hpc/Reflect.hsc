@@ -82,7 +82,6 @@ examineTix = do
                                       (map fromIntegral trx)
                        | (ModuleInfo mod' count hash ptr trxInfo trxArr) <- modInfo
 #else
-                                      [0,1] [0]
                        | (ModuleInfo mod' count hash ptr) <- modInfo
 #endif
                        ]
@@ -97,10 +96,11 @@ updateTix (Tix modTixes)
       sequence_ [ pokeArray ptr $ map fromIntegral tixs
 #if __GLASGOW_HASKELL__ >= 963
                 | (ModuleInfo mod1 count1 hash1 ptr info1 trx1,
+                   TixModule mod2 hash2 count2 tixs info2 trx2) <- zip modInfo modTixes
 #else
                 | (ModuleInfo mod1 count1 hash1 ptr,
+                   TixModule mod2 hash2 count2 tixs) <- zip modInfo modTixes
 #endif
-                   TixModule mod2 hash2 count2 tixs info2 trx2) <- zip modInfo modTixes
                 , if mod1 /= mod2
                 || (fromIntegral count1) /= count2
                 || hash1 /= hash2

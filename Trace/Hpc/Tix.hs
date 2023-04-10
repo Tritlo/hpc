@@ -1,4 +1,4 @@
-{-# LANGUAGE Safe, DeriveGeneric, StandaloneDeriving #-}
+{-# LANGUAGE Safe, DeriveGeneric, StandaloneDeriving, CPP #-}
 ------------------------------------------------------------
 -- Andy Gill and Colin Runciman, June 2006
 ------------------------------------------------------------
@@ -6,7 +6,10 @@
 -- | Datatypes and file-access routines for the tick data file
 -- (@.tix@) used by Hpc.
 module Trace.Hpc.Tix(Tix(..), TixModule(..),
-                     tixModuleName, tixModuleHash, tixModuleTixs, tixModuleTraceInfo, tixModuleTrace,
+                     tixModuleName, tixModuleHash, tixModuleTixs,
+#if __GLASGOW_HASKELL__ >= 963
+                     tixModuleTraceInfo, tixModuleTrace,
+#endif
                      readTix, writeTix, getTixFileName) where
 
 import Control.DeepSeq (NFData)
@@ -30,9 +33,10 @@ data TixModule = TixModule
                  Hash      --  hash number
                  Int       --  length of Tix list (allows pre-allocation at parse time).
                  [Integer] --  actual ticks
-                 -- TODO: these should be ints
+#if __GLASGOW_HASKELL__ >= 963
                  [Integer] --  current trace posistion
                  [Integer] -- traces
+#endif
         deriving (Read, Show, Eq)
 
 -- | @since 0.6.2.0
@@ -42,15 +46,21 @@ instance NFData TixModule
 
 -- TODO: Turn extractors below into proper 'TixModule' field-labels
 tixModuleName :: TixModule -> String
-tixModuleName (TixModule nm _ _ _ _ _) = nm
 tixModuleHash :: TixModule -> Hash
-tixModuleHash (TixModule _ h  _ _ _ _) = h
 tixModuleTixs :: TixModule -> [Integer]
+#if __GLASGOW_HASKELL__ >= 963
+tixModuleName (TixModule nm _ _ _ _ _) = nm
+tixModuleHash (TixModule _ h  _ _ _ _) = h
 tixModuleTixs (TixModule  _ _ _ tixs _ _) = tixs
 tixModuleTraceInfo :: TixModule -> [Integer]
-tixModuleTraceInfo (TixModule  _ _ _ _ info _) = info
 tixModuleTrace :: TixModule -> [Integer]
+tixModuleTraceInfo (TixModule  _ _ _ _ info _) = info
 tixModuleTrace (TixModule  _ _ _ _ _ trace) = trace
+#else
+tixModuleName (TixModule nm _ _ _ ) = nm
+tixModuleHash (TixModule _ h  _ _ ) = h
+tixModuleTixs (TixModule  _ _ _ tixs) = tixs
+#endif
 
 -- We /always/ read and write Tix from the current working directory.
 
