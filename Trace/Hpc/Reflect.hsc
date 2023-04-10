@@ -26,7 +26,7 @@ modInfo = unsafePerformIO $ do
 
 data ModuleInfo =
     ModuleInfo String Word32 Hash (Ptr Word64)
-#if __GLASGOW_HASKELL__ >= 970
+#if __GLASGOW_HASKELL__ >= 907
                                   (Ptr Word64)
                                   (Ptr Word64)
 #endif
@@ -40,14 +40,14 @@ moduleInfoList ptr
         tickCount <- (#peek HpcModuleInfo, tickCount) ptr
         hashNo    <- (#peek HpcModuleInfo, hashNo) ptr
         tixArr    <- (#peek HpcModuleInfo, tixArr) ptr
-#if __GLASGOW_HASKELL__ >= 970
+#if __GLASGOW_HASKELL__ >= 907
         trxInfo   <- (#peek HpcModuleInfo, trxInfo) ptr
         trxArr    <- (#peek HpcModuleInfo, trxArr) ptr
 #endif
         next      <- (#peek HpcModuleInfo, next) ptr
         rest      <- moduleInfoList next
         return $
-#if __GLASGOW_HASKELL__ >= 970
+#if __GLASGOW_HASKELL__ >= 907
           ModuleInfo modName tickCount (toHash (hashNo :: Int)) tixArr trxInfo trxArr : rest
 #else
           ModuleInfo modName tickCount (toHash (hashNo :: Int)) tixArr : rest
@@ -57,7 +57,7 @@ moduleInfoList ptr
 clearTix :: IO ()
 clearTix = do
       sequence_ [ pokeArray ptr $ take (fromIntegral count) $ repeat 0
-#if __GLASGOW_HASKELL__ >= 970
+#if __GLASGOW_HASKELL__ >= 907
                 | ModuleInfo _mod count _hash ptr _info _trx <- modInfo
 #else
                 | ModuleInfo _mod count _hash ptr <- modInfo
@@ -69,7 +69,7 @@ clearTix = do
 examineTix :: IO Tix
 examineTix = do
       mods <- sequence [ do tixs <- peekArray (fromIntegral count) ptr
-#if __GLASGOW_HASKELL__ >= 970
+#if __GLASGOW_HASKELL__ >= 907
                             info <- peekArray (fromIntegral 2) trxInfo
                             trx <- peekArray (fromIntegral (info !! 1)) trxArr
 #endif
@@ -77,7 +77,7 @@ examineTix = do
                             return $ TixModule mod' hash 
                                       (fromIntegral count)
                                       (map fromIntegral tixs)
-#if __GLASGOW_HASKELL__ >= 970
+#if __GLASGOW_HASKELL__ >= 907
                                       (map fromIntegral info)
                                       (map fromIntegral trx)
                        | (ModuleInfo mod' count hash ptr trxInfo trxArr) <- modInfo
@@ -94,7 +94,7 @@ updateTix (Tix modTixes)
   | length modTixes /= length modInfo = error "updateTix failed"
   | otherwise = do
       sequence_ [ pokeArray ptr $ map fromIntegral tixs
-#if __GLASGOW_HASKELL__ >= 970
+#if __GLASGOW_HASKELL__ >= 907
                 | (ModuleInfo mod1 count1 hash1 ptr info1 trx1,
                    TixModule mod2 hash2 count2 tixs info2 trx2) <- zip modInfo modTixes
 #else
