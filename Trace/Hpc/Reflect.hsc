@@ -29,6 +29,7 @@ data ModuleInfo =
 #if __GLASGOW_HASKELL__ >= 907
                                   (Ptr Word64)
                                   (Ptr Word64)
+                                  (Ptr Word64)
 #endif
 
 moduleInfoList :: Ptr () -> IO [ModuleInfo]
@@ -41,14 +42,15 @@ moduleInfoList ptr
         hashNo    <- (#peek HpcModuleInfo, hashNo) ptr
         tixArr    <- (#peek HpcModuleInfo, tixArr) ptr
 #if __GLASGOW_HASKELL__ >= 907
-        trxInfo   <- (#peek HpcModuleInfo, trxInfo) ptr
-        trxArr    <- (#peek HpcModuleInfo, trxArr) ptr
+        trxInfo      <- (#peek HpcModuleInfo, trxInfo) ptr
+        trxArr       <- (#peek HpcModuleInfo, trxArr) ptr
+        rettrxArr    <- (#peek HpcModuleInfo, rettrxArr) ptr
 #endif
         next      <- (#peek HpcModuleInfo, next) ptr
         rest      <- moduleInfoList next
         return $
 #if __GLASGOW_HASKELL__ >= 907
-          ModuleInfo modName tickCount (toHash (hashNo :: Int)) tixArr trxInfo trxArr : rest
+          ModuleInfo modName tickCount (toHash (hashNo :: Int)) tixArr trxInfo trxArr rettrxArr : rest
 #else
           ModuleInfo modName tickCount (toHash (hashNo :: Int)) tixArr : rest
 
@@ -58,7 +60,7 @@ clearTix :: IO ()
 clearTix = do
       sequence_ [ pokeArray ptr $ take (fromIntegral count) $ repeat 0
 #if __GLASGOW_HASKELL__ >= 907
-                | ModuleInfo _mod count _hash ptr _info _trx <- modInfo
+                | ModuleInfo _mod count _hash ptr _info _trx _rtrx <- modInfo
 #else
                 | ModuleInfo _mod count _hash ptr <- modInfo
 #endif
@@ -70,8 +72,9 @@ examineTix :: IO Tix
 examineTix = do
       mods <- sequence [ do tixs <- peekArray (fromIntegral count) ptr
 #if __GLASGOW_HASKELL__ >= 907
-                            info <- peekArray (fromIntegral 2) trxInfo
-                            trx <- peekArray (fromIntegral (info !! 1)) trxArr
+                            info <- peekArray (fromIntegral 3) trxInfo
+                            trx <- peekArray (fromIntegral (info !! 2)) trxArr
+                            rettrx <- peekArray (fromIntegral (info !! 2)) rettrxArr
 #endif
 
                             return $ TixModule mod' hash 
@@ -80,7 +83,8 @@ examineTix = do
 #if __GLASGOW_HASKELL__ >= 907
                                       (map fromIntegral info)
                                       (map fromIntegral trx)
-                       | (ModuleInfo mod' count hash ptr trxInfo trxArr) <- modInfo
+                                      (map fromIntegral rettrx)
+                       | (ModuleInfo mod' count hash ptr trxInfo trxArr rettrxArr) <- modInfo
 #else
                        | (ModuleInfo mod' count hash ptr) <- modInfo
 #endif
@@ -95,8 +99,8 @@ updateTix (Tix modTixes)
   | otherwise = do
       sequence_ [ pokeArray ptr $ map fromIntegral tixs
 #if __GLASGOW_HASKELL__ >= 907
-                | (ModuleInfo mod1 count1 hash1 ptr info1 trx1,
-                   TixModule mod2 hash2 count2 tixs info2 trx2) <- zip modInfo modTixes
+                | (ModuleInfo mod1 count1 hash1 ptr info1 trx1 rtrx1,
+                   TixModule mod2 hash2 count2 tixs info2 trx2 rtrx2) <- zip modInfo modTixes
 #else
                 | (ModuleInfo mod1 count1 hash1 ptr,
                    TixModule mod2 hash2 count2 tixs) <- zip modInfo modTixes
