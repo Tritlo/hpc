@@ -8,7 +8,7 @@
 module Trace.Hpc.Tix(Tix(..), TixModule(..),
                      tixModuleName, tixModuleHash, tixModuleTixs,
 #if __GLASGOW_HASKELL__ >= 907
-                     tixModuleTraceInfo, tixModuleTrace, tixModuleRetTrace,
+                     tixModuleTraceInfo, tixModuleTrace, tixModuleEvalTrace, tixModuleGlobalTrace,
 #endif
                      readTix, writeTix, getTixFileName) where
 
@@ -36,7 +36,8 @@ data TixModule = TixModule
 #if __GLASGOW_HASKELL__ >= 907
                  [Integer] --  current trace posistion
                  [Integer] -- traces
-                 [Integer] -- rettraces
+                 [Integer] -- evaltraces
+                 [Integer] -- gbltraces
 #endif
         deriving (Read, Show, Eq)
 
@@ -50,14 +51,15 @@ tixModuleName :: TixModule -> String
 tixModuleHash :: TixModule -> Hash
 tixModuleTixs :: TixModule -> [Integer]
 #if __GLASGOW_HASKELL__ >= 907
-tixModuleName (TixModule nm _ _ _ _ _ _) = nm
-tixModuleHash (TixModule _ h  _ _ _ _ _) = h
-tixModuleTixs (TixModule  _ _ _ tixs _ _ _) = tixs
+tixModuleName (TixModule nm _ _ _ _ _ _ _) = nm
+tixModuleHash (TixModule _ h  _ _ _ _ _ _) = h
+tixModuleTixs (TixModule  _ _ _ tixs _ _ _ _) = tixs
 tixModuleTraceInfo :: TixModule -> [Integer]
 tixModuleTrace :: TixModule -> [Integer]
-tixModuleTraceInfo (TixModule  _ _ _ _ info _ _) = info
-tixModuleTrace (TixModule  _ _ _ _ _ trace _) = trace
-tixModuleRetTrace (TixModule  _ _ _ _ _ _ ret) = ret
+tixModuleTraceInfo (TixModule  _ _ _ _ info _ _ _) = info
+tixModuleTrace (TixModule  _ _ _ _ _ trace _ _) = trace
+tixModuleEvalTrace (TixModule  _ _ _ _ _ _ eval _) = eval
+tixModuleGlobalTrace (TixModule  _ _ _ _ _ _  _ gbl) = gbl
 #else
 tixModuleName (TixModule nm _ _ _ ) = nm
 tixModuleHash (TixModule _ h  _ _ ) = h
